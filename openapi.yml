@@ -1,0 +1,115 @@
+openapi: '3.0.3'
+info:
+  title: step-ci-testing
+  version: 1.0.0
+tags:
+  - name: morphs
+servers:
+  - url: http://localhost:8888
+    description: local
+paths:
+  /morphs:
+    get:
+      operationId: getMorphs
+      tags:
+        - morphs
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Morphs'
+    post:
+      operationId: postMorph
+      tags:
+        - morphs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewMorph'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Morph'
+        '400':
+          description: Bad request
+          $ref: '#/components/responses/BadRequest'
+  /morphs/{id}:
+    get:
+      operationId: getMorphById
+      tags:
+        - morphs
+      parameters:
+        - in: path
+          name: id
+          schema:
+            $ref: '#/components/schemas/Id'
+          example: 1
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Morph'
+        '404':
+          description: Not found
+          $ref: '#/components/responses/NotFound'
+components:
+  schemas:
+    Morph:
+      allOf:
+        - type: object
+          required:
+            - id
+          properties:
+            id:
+              type: integer
+              example: 1
+        - $ref: '#/components/schemas/NewMorph'
+    NewMorph:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          example: Normal
+    Morphs:
+      type: array
+      items:
+        $ref: '#/components/schemas/Morph'
+    Id:
+      type: integer
+      example: 1
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - message
+            properties:
+              message:
+                type: string
+                example: invalid value
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - message
+            properties:
+              message:
+                type: string
+                example: not found

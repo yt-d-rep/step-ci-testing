@@ -1,0 +1,64 @@
+version: "1.0"
+name: step-ci-testing
+config:
+  http:
+    baseURL: http://localhost:8888
+tests:
+  morphs:
+    steps:
+      - id: getMorphs
+        http:
+          url: /morphs
+          method: GET
+          check:
+            status: 200
+            schema:
+              $ref: "#/components/schemas/Morphs"
+      - id: postMorph
+        http:
+          url: /morphs
+          method: POST
+          headers:
+            Content-Type: application/json
+            accept: application/json
+          json:
+            name: sed magna in
+          check:
+            status: 200
+            schema:
+              $ref: "#/components/schemas/Morph"
+      - id: getMorphById
+        http:
+          url: /morphs/1
+          method: GET
+          check:
+            status: 200
+            schema:
+              $ref: "#/components/schemas/Morph"
+components:
+  schemas:
+    Morph:
+      allOf:
+        - type: object
+          required:
+            - id
+          properties:
+            id:
+              type: integer
+              example: 1
+        - $ref: "#/components/schemas/NewMorph"
+    NewMorph:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          example: Normal
+    Morphs:
+      type: array
+      items:
+        $ref: "#/components/schemas/Morph"
+    Id:
+      type: integer
+      example: 1
